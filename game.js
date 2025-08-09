@@ -12,6 +12,36 @@ playerImg.onload = () => {
   console.log("Player image loaded");
 };
 
+const leftBtn = document.getElementById("left-btn");
+const rightBtn = document.getElementById("right-btn");
+
+leftBtn.addEventListener("mousedown", () => movePlayer(-1));
+rightBtn.addEventListener("mousedown", () => movePlayer(1));
+
+// Опционально, чтобы движение было плавным при удержании кнопки:
+let moveInterval;
+
+leftBtn.addEventListener("mousedown", () => {
+  clearInterval(moveInterval);
+  moveInterval = setInterval(() => movePlayer(-1), 50);
+});
+leftBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
+leftBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
+
+rightBtn.addEventListener("mousedown", () => {
+  clearInterval(moveInterval);
+  moveInterval = setInterval(() => movePlayer(1), 50);
+});
+rightBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
+rightBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
+
+function movePlayer(direction) {
+  // direction: -1 — влево, 1 — вправо
+  player.x += direction * player.speed;
+  if (player.x < 0) player.x = 0;
+  if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
+}
+
 // HUD
 const scoreEl = document.getElementById("score");
 const livesEl = document.getElementById("lives");
@@ -59,34 +89,6 @@ types.forEach(type => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") player.x = Math.max(0, player.x - player.speed);
   if (e.key === "ArrowRight") player.x = Math.min(canvas.width - player.size, player.x + player.speed);
-});
-
-let touchX = null;
-
-canvas.addEventListener('touchstart', (e) => {
-  touchX = e.touches[0].clientX;
-  e.preventDefault();
-});
-
-canvas.addEventListener('touchmove', (e) => {
-  if (touchX === null) return;
-  const currentX = e.touches[0].clientX;
-  const deltaX = currentX - touchX;
-
-  player.x += deltaX;
-
-  // Ограничения по краям канваса
-  if (player.x < 0) player.x = 0;
-  if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
-
-  touchX = currentX;
-
-  e.preventDefault(); // чтобы не скроллилась страница
-});
-
-canvas.addEventListener('touchend', (e) => {
-  touchX = null;
-  e.preventDefault();
 });
 
 function spawnObject() {
