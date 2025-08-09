@@ -61,6 +61,34 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight") player.x = Math.min(canvas.width - player.size, player.x + player.speed);
 });
 
+let touchX = null;
+
+canvas.addEventListener('touchstart', (e) => {
+  touchX = e.touches[0].clientX;
+  e.preventDefault();
+});
+
+canvas.addEventListener('touchmove', (e) => {
+  if (touchX === null) return;
+  const currentX = e.touches[0].clientX;
+  const deltaX = currentX - touchX;
+
+  player.x += deltaX;
+
+  // Ограничения по краям канваса
+  if (player.x < 0) player.x = 0;
+  if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
+
+  touchX = currentX;
+
+  e.preventDefault(); // чтобы не скроллилась страница
+});
+
+canvas.addEventListener('touchend', (e) => {
+  touchX = null;
+  e.preventDefault();
+});
+
 function spawnObject() {
   const type = types[Math.floor(Math.random() * types.length)];
   objects.push({
