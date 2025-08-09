@@ -3,6 +3,10 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
+//Игрок
+const playerImg = new Image();
+playerImg.src = "images/player.png";
+
 // HUD
 const scoreEl = document.getElementById("score");
 const livesEl = document.getElementById("lives");
@@ -105,8 +109,7 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Игрок
-  ctx.fillStyle = "blue";
-  ctx.fillRect(player.x, player.y, player.size, player.size);
+ ctx.drawImage(playerImg, player.x, player.y, player.size, player.size);
 
   // Предметы
   objects.forEach(obj => {
