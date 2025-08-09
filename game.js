@@ -3,9 +3,14 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
-//Игрок
+// Игрок
 const playerImg = new Image();
 playerImg.src = "images/player.png";
+let playerImgLoaded = false;
+playerImg.onload = () => {
+  playerImgLoaded = true;
+  console.log("Player image loaded");
+};
 
 // HUD
 const scoreEl = document.getElementById("score");
@@ -52,8 +57,8 @@ types.forEach(type => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") player.x -= player.speed;
-  if (e.key === "ArrowRight") player.x += player.speed;
+  if (e.key === "ArrowLeft") player.x = Math.max(0, player.x - player.speed);
+  if (e.key === "ArrowRight") player.x = Math.min(canvas.width - player.size, player.x + player.speed);
 });
 
 function spawnObject() {
@@ -66,24 +71,21 @@ function spawnObject() {
 }
 
 function update(delta) {
-  // Ускорение падения
   fallSpeed += delta * 0.0001;
   spawnInterval = Math.max(500, spawnInterval - delta * 0.00005);
 
-  // Спавн
   if (performance.now() - lastSpawn > spawnInterval) {
     spawnObject();
     lastSpawn = performance.now();
   }
 
-  // Движение объектов
   for (let i = objects.length - 1; i >= 0; i--) {
     objects[i].y += fallSpeed;
     if (objects[i].y > canvas.height) {
       objects.splice(i, 1);
       continue;
     }
-    // Столкновение
+
     if (
       objects[i].x < player.x + player.size &&
       objects[i].x + 32 > player.x &&
@@ -96,7 +98,6 @@ function update(delta) {
     }
   }
 
-  // Проверка конца игры
   if (lives <= 0) {
     endGame(false);
   }
@@ -108,15 +109,20 @@ function update(delta) {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Игрок
- ctx.drawImage(playerImg, player.x, player.y, player.size, player.size);
+  // Рисуем игрока
+  if (playerImgLoaded) {
+    ctx.drawImage(playerImg, player.x, player.y, player.size, player.size);
+  } else {
+    ctx.fillStyle = "blue";
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+  }
 
-  // Предметы
+  // Рисуем предметы
   objects.forEach(obj => {
     ctx.drawImage(images[obj.type], obj.x, obj.y, 32, 32);
   });
 
-  // HUD
+  // Обновляем HUD
   scoreEl.textContent = "Счёт: " + score;
   livesEl.textContent = "Жизни: " + lives;
 }
@@ -132,6 +138,14 @@ function gameLoop(timestamp) {
 
   requestAnimationFrame(gameLoop);
 }
+
+// Запуск игры только после загрузки картинки игрока
+startBtn.disabled = true; // блокируем кнопку пока картинка не загрузится
+
+playerImg.onload = () => {
+  playerImgLoaded = true;
+  startBtn.disabled = false;
+};
 
 function startGame() {
   score = 0;
