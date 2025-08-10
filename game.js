@@ -1,9 +1,4 @@
-// Базовые размеры игрового поля
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = 800;  // фиксируем исходный размер логики игры
-canvas.height = 600;
-
+// DOM элементы
 const startBtn = document.getElementById("start-btn");
 const startScreen = document.getElementById("start-screen");
 const gameContainer = document.getElementById("game-container");
@@ -21,22 +16,13 @@ const rightBtn = document.getElementById("right-btn");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// Игровые переменные
-let scale = 1;
+// Логический размер игрового поля
+const logicalWidth = 800;
+const logicalHeight = 600;
 
-let player = { x: 400, y: 550, width: 50, height: 50, speed: 8 };
-let bugs = [];
-let score = 0;
-let lives = 5;
-let gameInterval = null;
-let spawnInterval = null;
-let bugSpeed = 2;
-let acceleration = 0.05;
-
-// Звуки
-const soundCatch = new Audio("sounds/catch.mp3");
-const soundLose = new Audio("sounds/lifedown.mp3");
-const soundVictory = new Audio("sounds/victory.mp3");
+// Задаём логический размер через атрибуты canvas (в HTML можно тоже поставить)
+canvas.width = logicalWidth;
+canvas.height = logicalHeight;
 
 // Изображения
 let playerImg = new Image();
@@ -57,6 +43,21 @@ types.forEach(t => {
   images[t.name] = img;
 });
 
+// Игровые переменные
+let player = { x: 400, y: 550, width: 50, height: 50, speed: 8 };
+let bugs = [];
+let score = 0;
+let lives = 5;
+let gameInterval = null;
+let spawnInterval = null;
+let bugSpeed = 2;
+let acceleration = 0.05;
+
+// Звуки
+const soundCatch = new Audio("sounds/catch.mp3");
+const soundLose = new Audio("sounds/lifedown.mp3");
+const soundVictory = new Audio("sounds/victory.mp3");
+
 // Скрываем контролы до старта
 controls.style.display = "none";
 
@@ -70,18 +71,13 @@ playerImg.onload = () => {
 };
 if (playerImg.complete) playerImg.onload();
 
-// Функция ресайза canvas под размер окна и расчет масштаба
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const scaleX = canvas.width / BASE_WIDTH;
-  const scaleY = canvas.height / BASE_HEIGHT;
-
-  scale = Math.min(scaleX, scaleY);
+// Получаем текущие масштабные коэффициенты для canvas
+function getScale() {
+  return {
+    scaleX: canvas.clientWidth / logicalWidth,
+    scaleY: canvas.clientHeight / logicalHeight,
+  };
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
 // Обработчик старта
 startBtn.addEventListener("click", () => {
@@ -111,9 +107,9 @@ function startGame() {
   spawnInterval = setInterval(spawnBug, 1000);
 }
 
-// Спавн новых объектов — координаты в базовых размерах
+// Спавн новых объектов
 function spawnBug() {
-  let x = Math.random() * (BASE_WIDTH - 50);
+  let x = Math.random() * (logicalWidth - 50);
   let type = types[Math.floor(Math.random() * types.length)].name;
   bugs.push({ x: x, y: 0, width: 50, height: 50, type });
 }
@@ -122,10 +118,12 @@ function spawnBug() {
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  const { scaleX, scaleY } = getScale();
+
   for (let i = bugs.length - 1; i >= 0; i--) {
     bugs[i].y += bugSpeed;
 
-    // Проверка поимки игроком
+    // Проверка поимки игроком (в логических координатах)
     if (
       player.x < bugs[i].x + bugs[i].width &&
       player.x + player.width > bugs[i].x &&
@@ -162,28 +160,50 @@ function updateGame() {
         return;
       }
     }
-    else if (bugs[i].y > canvas.height) {
+    else if (bugs[i].y > logicalHeight) {
       // Удаляем объект, достигший дна — жизни не уменьшаются
       bugs.splice(i, 1);
     }
   }
 
-  // Рисуем объекты
+  // Рисуем объекты с учётом масштаба
   for (let obj of bugs) {
     if (images[obj.type] && images[obj.type].complete) {
-      ctx.drawImage(images[obj.type], obj.x, obj.y, obj.width, obj.height);
+      ctx.drawImage(
+        images[obj.type],
+        obj.x * scaleX,
+        obj.y * scaleY,
+        obj.width * scaleX,
+        obj.height * scaleY
+      );
     } else {
       ctx.fillStyle = "gray";
-      ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+      ctx.fillRect(
+        obj.x * scaleX,
+        obj.y * scaleY,
+        obj.width * scaleX,
+        obj.height * scaleY
+      );
     }
   }
 
-  // Рисуем игрока
+  // Рисуем игрока с учётом масштаба
   if (playerImgLoaded) {
-    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+    ctx.drawImage(
+      playerImg,
+      player.x * scaleX,
+      player.y * scaleY,
+      player.width * scaleX,
+      player.height * scaleY
+    );
   } else {
     ctx.fillStyle = "blue";
-    ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.fillRect(
+      player.x * scaleX,
+      player.y * scaleY,
+      player.width * scaleX,
+      player.height * scaleY
+    );
   }
 }
 
@@ -225,7 +245,7 @@ function moveLeftOnce() {
   player.x = Math.max(0, player.x - player.speed);
 }
 function moveRightOnce() {
-  player.x = Math.min(BASE_WIDTH - player.width, player.x + player.speed);
+  player.x = Math.min(logicalWidth - player.width, player.x + player.speed);
 }
 
 leftBtn.addEventListener("mousedown", moveLeftOnce);
@@ -280,6 +300,5 @@ document.addEventListener("gesturestart", function (event) {
 
 // ------- Анимация конфетти (простая) -------
 function startConfetti() {
-  // Заглушка — сюда можно добавить конфетти-библиотеку
   console.log("С днём рождения, Витя! 🎉");
 }
