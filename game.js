@@ -117,7 +117,7 @@ function updateGame() {
     ) {
       const objType = bugs[i].type;
 
-      bugs.splice(i, 1);
+      bugs.splice(i, 1);  // удаляем пойманный объект
 
       if (objType === "bug") {
         score += 3;
@@ -133,7 +133,7 @@ function updateGame() {
         soundLose.play().catch(() => {});
         if (lives <= 0) {
           endGame(false);
-          return;
+          return; // чтобы остановить обновление игры после конца
         }
       }
 
@@ -142,12 +142,17 @@ function updateGame() {
 
       if (score >= 20) {
         endGame(true);
-        return;
+        return; // чтобы остановить обновление игры после победы
       }
+
+      continue; // объект обработан, идем к следующему
     }
-    else if (bugs[i].y > canvas.height) {
-      // Объект достиг дна - просто удаляем, жизни не трогаем
+
+    // Если объект достиг низа экрана — просто удаляем, без изменения жизней
+    if (bugs[i].y > canvas.height) {
       bugs.splice(i, 1);
+      // Жизни и счет не меняем
+      continue;
     }
   }
 
