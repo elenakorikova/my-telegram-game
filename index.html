@@ -40,21 +40,27 @@
 </head>
 <body>
   <!-- Стартовый экран -->
-  <div id="start-screen">
-    <h1>Давай поможем Вите поймать все баги</h1>
-    <div class="game-rules">
-    <div class="rules-header">ПРАВИЛА ИГРЫ</div>
-    <div class="rules-content">
-      <p>← → - управление персонажем</p>
-      <p>🐞 <span class="bug-rule">+1 к счету</span></p>
-      <p>📝 <span class="mockup-rule">+1 к счету</span></p>
-      <p>📚 <span class="confluence-rule">+1 к счету</span></p>
-      <p>☕️ <span class="coffee-rule">+1 жизнь (макс. 5)</span></p>
-      <p>🔥 <span class="fire-rule">-1 жизнь</span></p>
-      <p>Цель: набрать 20 очков!</p>
+ <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-buttons">
+        <span class="terminal-btn red"></span>
+        <span class="terminal-btn yellow"></span>
+        <span class="terminal-btn green"></span>
+      </div>
+      <span class="terminal-title">rules.exe</span>
+    </div>
+    <div class="terminal-body">
+      <p>> Управление: кнопки ← → </p>
+      <p>> 🐞 Баг: <span class="accent-red">+1 очко</span></p>
+      <p>> 📝 Макет: <span class="accent-blue">+1 очко</span></p>
+      <p>> 📚 Документ: <span class="accent-yellow">+1 очко</span></p>
+      <p>> ☕ Кофе: <span class="accent-green">+1 жизнь (max 5)</span></p>
+      <p>> 🔥 Горящая жопа: <span class="accent-orange">-1 жизнь</span></p>
+      <p>> Цель: <span class="blink">набрать 20 очков!</span></p>
     </div>
   </div>
-    <button id="start-btn">Начать</button>
+  
+  <button id="start-btn">ЗАПУСК ИГРЫ</button>
   </div>
 
   <!-- Кнопки управления (скрыты до старта) -->
