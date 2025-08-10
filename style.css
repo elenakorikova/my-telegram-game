@@ -39,14 +39,14 @@ body {
 }
 
 #gameCanvas {
-  width: 100vw;   /* ширина - 100% от ширины окна */
-  height: 100vh;  /* высота - 100% от высоты окна */
-  display: block;
-  margin: 0 auto;
-  background: #fff;
+  max-height: 100vh; /* не выше окна */
+  width: 100%;       /* по ширине контейнера */
+  height: auto;      /* высота авто, чтобы не искажалось */
   border: 2px solid #333;
+  display: block;
+  margin: 10px auto;
+  background: #fff;
 }
-
 
 #score, #lives {
     font-size: 20px;
