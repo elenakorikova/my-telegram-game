@@ -68,8 +68,11 @@ if (playerImg.complete) playerImg.onload();
 
 // Функция подгонки canvas под размер окна
 function resizeCanvas() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const maxWidth = 800; // Максимальная ширина игрового поля
+  const padding = 10;   // Отступ снизу для игрока
+
+  let width = Math.min(window.innerWidth, maxWidth);
+  let height = window.innerHeight - padding;
 
   scale = window.devicePixelRatio || 1;
 
@@ -77,19 +80,18 @@ function resizeCanvas() {
   canvas.style.width = width + 'px';
   canvas.style.height = height + 'px';
 
-  // Внутренние размеры с учетом масштаба для четкости
+  // Внутренние размеры с учетом масштаба
   canvas.width = width * scale;
   canvas.height = height * scale;
 
-  // Устанавливаем масштаб рисования
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
-  // Обновляем позицию игрока снизу с отступом 10px
-  player.y = height - player.height - 10;
+  // Обновляем позицию игрока снизу с отступом padding
+  player.y = height - player.height - padding;
 
   // Ограничиваем X игрока, чтобы не выходил за границы
   player.x = Math.min(player.x, width - player.width);
-
+}
   // Можно скорректировать скорость и размеры объектов при необходимости
 }
 
