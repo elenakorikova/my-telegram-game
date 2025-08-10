@@ -68,7 +68,7 @@ if (playerImg.complete) playerImg.onload();
 // Функция подгонки canvas под размер окна
 function resizeCanvas() {
   const maxWidth = 800; // Максимальная ширина игрового поля
-  const padding = 10;   // Отступ снизу
+  const padding = 30;   // Отступ снизу
 
   let width = Math.min(window.innerWidth, maxWidth);
   let height = window.innerHeight - padding;
