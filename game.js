@@ -98,11 +98,14 @@ resizeCanvas();
 
 // Обработчик старта
 startBtn.addEventListener("click", () => {
-  console.log("Start clicked");
-  if (!playerImgLoaded) {
-    console.log("Player image not loaded yet");
-    return;
-  }
+  if (!playerImgLoaded) return;
+  resizeCanvas();
+  startScreen.style.display = "none"; // Это скроет и терминал тоже
+  gameContainer.style.display = "block";
+  controls.style.display = "flex";
+  startGame();
+});
+
   resizeCanvas();  // Обновляем размеры перед стартом
   console.log("Canvas size:", canvas.width, canvas.height);
   startScreen.style.display = "none";
