@@ -68,7 +68,7 @@ if (playerImg.complete) playerImg.onload();
 // Функция подгонки canvas под размер окна
 function resizeCanvas() {
   const maxWidth = 800; // Максимальная ширина
-  const heightOffset = 40; // Уменьшаем высоту на 40px
+  const heightOffset = 120; // Уменьшаем высоту на 40px
 
   let width = Math.min(window.innerWidth, maxWidth);
   let height = window.innerHeight - heightOffset;
