@@ -71,7 +71,7 @@ function resizeCanvas() {
   const padding = 30;   // Отступ снизу
 
   let width = Math.min(window.innerWidth, maxWidth);
-  let height = window.innerHeight - padding;
+  let height = window.innerHeight - 40;
 
   scale = window.devicePixelRatio || 1;
 
