@@ -18,41 +18,54 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
-// Игрок и параметры
+// Изображения
 let playerImg = new Image();
 playerImg.src = "images/player.png";
 let playerImgLoaded = false;
 
-let bugImg = new Image();
-bugImg.src = "images/bug.png";
+const types = [
+  { name: "bug", img: "images/bug.png" },
+  { name: "mockup", img: "images/mockup.png" },
+  { name: "confluence", img: "images/confluence.png" },
+  { name: "fire", img: "images/fire.png" },
+];
 
-let player = { x: 400, y: 500, width: 50, height: 50, speed: 8 };
+let images = {};
+types.forEach(t => {
+  const img = new Image();
+  img.src = t.img;
+  images[t.name] = img;
+});
+
+// Игровые переменные
+let player = { x: 400, y: 550, width: 50, height: 50, speed: 8 };
 let bugs = [];
 let score = 0;
 let lives = 5;
 let gameInterval = null;
 let spawnInterval = null;
 let bugSpeed = 2;
-let acceleration = 0.1;
-
-// Скрываем кнопки управления до начала игры
-controls.style.display = "none";
+let acceleration = 0.05;
 
 // Звуки
 const soundCatch = new Audio("sounds/catch.mp3");
 const soundLose = new Audio("sounds/lifedown.mp3");
 const soundVictory = new Audio("sounds/victory.mp3");
 
-// Обработка загрузки игрока и активация кнопки
+// Скрываем контролы до старта
+controls.style.display = "none";
+
+// Стартовая кнопка — блокируем пока игрок не загрузится
+startBtn.disabled = true;
+
 playerImg.onload = () => {
   playerImgLoaded = true;
   startBtn.disabled = false;
+  console.log("Player image loaded, start button enabled");
 };
-if (playerImg.complete) {
-  playerImg.onload();
-}
+if (playerImg.complete) playerImg.onload();
 
-// Обработчик кнопки "Начать"
+// Обработчик старта
 startBtn.addEventListener("click", () => {
   if (!playerImgLoaded) return;
   startScreen.style.display = "none";
@@ -61,53 +74,90 @@ startBtn.addEventListener("click", () => {
   startGame();
 });
 
-// Основные функции игры
+// Запуск игры
 function startGame() {
   score = 0;
   lives = 5;
   bugs = [];
   bugSpeed = 2;
-
   scoreDisplay.textContent = "Счёт: " + score;
   livesDisplay.textContent = "Жизни: " + lives;
 
   gameOverScreen.style.display = "none";
   victoryScreen.style.display = "none";
 
-  clearInterval(gameInterval);
-  clearInterval(spawnInterval);
+  if (gameInterval) clearInterval(gameInterval);
+  if (spawnInterval) clearInterval(spawnInterval);
 
   gameInterval = setInterval(updateGame, 20);
   spawnInterval = setInterval(spawnBug, 1000);
 }
 
+// Спавн новых объектов
 function spawnBug() {
   let x = Math.random() * (canvas.width - 50);
-  bugs.push({ x, y: 0, width: 50, height: 50 });
+  // Случайно выбираем тип объекта
+  let type = types[Math.floor(Math.random() * types.length)].name;
+  bugs.push({ x: x, y: 0, width: 50, height: 50, type });
 }
 
+// Обновление игрового цикла
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Движение и удаление жуков
   for (let i = bugs.length - 1; i >= 0; i--) {
     bugs[i].y += bugSpeed;
-    if (bugs[i].y > canvas.height) {
+
+    // Проверка поимки игроком
+    if (
+      player.x < bugs[i].x + bugs[i].width &&
+      player.x + player.width > bugs[i].x &&
+      player.y < bugs[i].y + bugs[i].height &&
+      player.y + player.height > bugs[i].y
+    ) {
+      const objType = bugs[i].type;
+
       bugs.splice(i, 1);
-      lives--;
-      soundLose.play().catch(() => {});
+
+      if (objType === "bug") {
+        score += 3;
+        soundCatch.play().catch(() => {});
+      } else if (objType === "mockup") {
+        score += 1;
+        soundCatch.play().catch(() => {});
+      } else if (objType === "confluence") {
+        lives = 5;
+        soundCatch.play().catch(() => {});
+      } else if (objType === "fire") {
+        lives--;
+        soundLose.play().catch(() => {});
+        if (lives <= 0) {
+          endGame(false);
+          return;
+        }
+      }
+
+      scoreDisplay.textContent = "Счёт: " + score;
       livesDisplay.textContent = "Жизни: " + lives;
-      if (lives <= 0) endGame(false);
+
+      if (score >= 20) {
+        endGame(true);
+        return;
+      }
+    }
+    else if (bugs[i].y > canvas.height) {
+      // Объект достиг дна - просто удаляем, жизни не трогаем
+      bugs.splice(i, 1);
     }
   }
 
-  // Рисуем жуков
-  for (let bug of bugs) {
-    if (bugImg.complete) {
-      ctx.drawImage(bugImg, bug.x, bug.y, bug.width, bug.height);
+  // Рисуем объекты
+  for (let obj of bugs) {
+    if (images[obj.type] && images[obj.type].complete) {
+      ctx.drawImage(images[obj.type], obj.x, obj.y, obj.width, obj.height);
     } else {
-      ctx.fillStyle = "red";
-      ctx.fillRect(bug.x, bug.y, bug.width, bug.height);
+      ctx.fillStyle = "gray";
+      ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
     }
   }
 
@@ -118,24 +168,6 @@ function updateGame() {
     ctx.fillStyle = "blue";
     ctx.fillRect(player.x, player.y, player.width, player.height);
   }
-
-  // Коллизии
-  for (let i = bugs.length - 1; i >= 0; i--) {
-    if (
-      player.x < bugs[i].x + bugs[i].width &&
-      player.x + player.width > bugs[i].x &&
-      player.y < bugs[i].y + bugs[i].height &&
-      player.y + player.height > bugs[i].y
-    ) {
-      bugs.splice(i, 1);
-      score++;
-      soundCatch.play().catch(() => {});
-      scoreDisplay.textContent = "Счёт: " + score;
-
-      if (score % 10 === 0) bugSpeed += acceleration;
-      if (score >= 50) endGame(true);
-    }
-  }
 }
 
 // Завершение игры
@@ -144,13 +176,13 @@ function endGame(victory) {
   clearInterval(spawnInterval);
   gameInterval = null;
   spawnInterval = null;
-
   controls.style.display = "none";
   gameContainer.style.display = "none";
 
   if (victory) {
     victoryScreen.style.display = "block";
     soundVictory.play().catch(() => {});
+    startConfetti(); // добавим анимацию конфетти, если хочешь
   } else {
     gameOverScreen.style.display = "block";
   }
@@ -159,19 +191,19 @@ function endGame(victory) {
 // Перезапуск игры
 restartBtn.addEventListener("click", () => {
   gameOverScreen.style.display = "none";
-  controls.style.display = "flex";
   gameContainer.style.display = "block";
+  controls.style.display = "flex";
   startGame();
 });
 
 restartBtnVictory.addEventListener("click", () => {
   victoryScreen.style.display = "none";
-  controls.style.display = "flex";
   gameContainer.style.display = "block";
+  controls.style.display = "flex";
   startGame();
 });
 
-// Управление игроком — кнопки
+// Управление игроком — кнопки влево/вправо (одиночные шаги)
 function moveLeftOnce() {
   player.x = Math.max(0, player.x - player.speed);
 }
@@ -179,46 +211,59 @@ function moveRightOnce() {
   player.x = Math.min(canvas.width - player.width, player.x + player.speed);
 }
 
-let leftInterval = null;
-let rightInterval = null;
+leftBtn.addEventListener("mousedown", moveLeftOnce);
+rightBtn.addEventListener("mousedown", moveRightOnce);
+
+leftBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  moveLeftOnce();
+}, { passive: false });
+
+rightBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  moveRightOnce();
+}, { passive: false });
+
+// Плавное движение при удержании (опционально)
+let holdInterval = null;
+function clearHoldInterval() {
+  if (holdInterval) clearInterval(holdInterval);
+  holdInterval = null;
+}
 
 leftBtn.addEventListener("mousedown", () => {
-  moveLeftOnce();
-  leftInterval = setInterval(moveLeftOnce, 50);
+  clearHoldInterval();
+  holdInterval = setInterval(moveLeftOnce, 60);
 });
-leftBtn.addEventListener("mouseup", () => clearInterval(leftInterval));
-leftBtn.addEventListener("mouseleave", () => clearInterval(leftInterval));
+leftBtn.addEventListener("mouseup", clearHoldInterval);
+leftBtn.addEventListener("mouseleave", clearHoldInterval);
+leftBtn.addEventListener("touchend", clearHoldInterval);
 
 rightBtn.addEventListener("mousedown", () => {
-  moveRightOnce();
-  rightInterval = setInterval(moveRightOnce, 50);
+  clearHoldInterval();
+  holdInterval = setInterval(moveRightOnce, 60);
 });
-rightBtn.addEventListener("mouseup", () => clearInterval(rightInterval));
-rightBtn.addEventListener("mouseleave", () => clearInterval(rightInterval));
-
-// Сенсорное управление (тач)
-leftBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  moveLeftOnce();
-  leftInterval = setInterval(moveLeftOnce, 50);
-}, { passive: false });
-leftBtn.addEventListener("touchend", () => clearInterval(leftInterval));
-
-rightBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  moveRightOnce();
-  rightInterval = setInterval(moveRightOnce, 50);
-}, { passive: false });
-rightBtn.addEventListener("touchend", () => clearInterval(rightInterval));
+rightBtn.addEventListener("mouseup", clearHoldInterval);
+rightBtn.addEventListener("mouseleave", clearHoldInterval);
+rightBtn.addEventListener("touchend", clearHoldInterval);
 
 // Клавиатура
-document.addEventListener("keydown", e => {
+document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") moveLeftOnce();
-  else if (e.key === "ArrowRight") moveRightOnce();
+  if (e.key === "ArrowRight") moveRightOnce();
 });
 
-// Отключение масштабирования на сенсорных устройствах
-document.addEventListener("touchstart", e => {
-  if (e.touches.length > 1) e.preventDefault();
+// Отключаем масштабирование/жесты для тач-устройств
+document.addEventListener("touchstart", function (event) {
+  if (event.touches.length > 1) event.preventDefault();
 }, { passive: false });
-document.addEventListener("gesturestart", e => e.preventDefault());
+document.addEventListener("gesturestart", function (event) {
+  event.preventDefault();
+});
+
+// ------- Анимация конфетти (простая) -------
+function startConfetti() {
+  // Твой код или можно подключить библиотеку confetti.js
+  // Пока просто выводим сообщение в консоль
+  console.log("С днем рождения, Витя! 🎉");
+}
