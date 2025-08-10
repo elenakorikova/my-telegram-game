@@ -1,6 +1,8 @@
 // Базовые размеры игрового поля
-const BASE_WIDTH = 800;
-const BASE_HEIGHT = 600;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = 800;  // фиксируем исходный размер логики игры
+canvas.height = 600;
 
 const startBtn = document.getElementById("start-btn");
 const startScreen = document.getElementById("start-screen");
@@ -120,19 +122,10 @@ function spawnBug() {
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.save();
-
-  // Центрируем игровое поле на canvas
-  const offsetX = (canvas.width - BASE_WIDTH * scale) / 2;
-  const offsetY = (canvas.height - BASE_HEIGHT * scale) / 2;
-
-  ctx.translate(offsetX, offsetY);
-  ctx.scale(scale, scale);
-
-  // Обновление и проверка поимки объектов
   for (let i = bugs.length - 1; i >= 0; i--) {
     bugs[i].y += bugSpeed;
 
+    // Проверка поимки игроком
     if (
       player.x < bugs[i].x + bugs[i].width &&
       player.x + player.width > bugs[i].x &&
@@ -140,6 +133,7 @@ function updateGame() {
       player.y + player.height > bugs[i].y
     ) {
       const objType = bugs[i].type;
+
       bugs.splice(i, 1);
 
       if (objType === "bug") {
@@ -156,7 +150,6 @@ function updateGame() {
         soundLose.play().catch(() => {});
         if (lives <= 0) {
           endGame(false);
-          ctx.restore();
           return;
         }
       }
@@ -166,10 +159,11 @@ function updateGame() {
 
       if (score >= 20) {
         endGame(true);
-        ctx.restore();
         return;
       }
-    } else if (bugs[i].y > BASE_HEIGHT) {
+    }
+    else if (bugs[i].y > canvas.height) {
+      // Удаляем объект, достигший дна — жизни не уменьшаются
       bugs.splice(i, 1);
     }
   }
@@ -191,8 +185,6 @@ function updateGame() {
     ctx.fillStyle = "blue";
     ctx.fillRect(player.x, player.y, player.width, player.height);
   }
-
-  ctx.restore();
 }
 
 // Завершение игры
