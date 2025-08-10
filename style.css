@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -21,65 +23,98 @@ body {
     z-index: 10;
 }
 
+/* Терминальный стиль */
+.terminal {
+  width: 90%;
+  max-width: 500px;
+  margin: 25px auto;
+  background: #0d0d0d;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  font-family: 'Courier New', monospace;
+  border: 1px solid #00ff00;
+}
+
+.terminal-header {
+  background: #1a1a1a;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #00ff00;
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.terminal-btn.red { background: #ff5f56; }
+.terminal-btn.yellow { background: #ffbd2e; }
+.terminal-btn.green { background: #27c93f; }
+
+.terminal-title {
+  color: #00ff00;
+  margin-left: 15px;
+  font-size: 14px;
+}
+
+.terminal-body {
+  padding: 15px;
+  color: #00ff00;
+  line-height: 1.6;
+}
+
+.terminal-body p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+/* Акцентные цвета */
+.accent-red { color: #ff5555; }
+.accent-blue { color: #5555ff; }
+.accent-yellow { color: #ffff55; }
+.accent-green { color: #55ff55; }
+.accent-orange { color: #ff9900; }
+
+/* Анимация мигания */
+.blink {
+  animation: blink 1s infinite step-start;
+  color: #00ff00;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Стиль кнопки в терминальном стиле */
 #start-btn {
-  margin-top: 20px;
-  padding: 12px 30px;
-  font-size: 1.2em;
   background: #00aa00;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 12px 40px;
+  font-size: 18px;
+  margin-top: 20px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s;
   font-family: 'Courier New', monospace;
   text-transform: uppercase;
   letter-spacing: 1px;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
 }
 
 #start-btn:hover {
   background: #00ff00;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
 }
-
-/* Стили для блока правил */
-.game-rules {
-  background: #0a0a0a;
-  border: 3px solid #00ff00;
-  border-radius: 5px;
-  padding: 15px;
-  margin: 20px auto;
-  max-width: 400px;
-  font-family: 'Courier New', monospace;
-  color: #00ff00;
-  box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-}
-
-.rules-header {
-  font-size: 1.5em;
-  text-align: center;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 0 5px #00ff00;
-}
-
-.rules-content {
-  line-height: 1.6;
-}
-
-.rules-content p {
-  margin: 10px 0;
-  display: flex;
-  align-items: center;
-}
-
-/* Стили для разных типов объектов */
-.bug-rule { color: #ff5555; }
-.mockup-rule { color: #5555ff; }
-.confluence-rule { color: #ffff55; }
-.coffee-rule { color: #55ff55; }
-.fire-rule { color: #ff9900; }
 
 #hud {
   position: fixed;
