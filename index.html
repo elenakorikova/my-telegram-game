@@ -2,34 +2,41 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Витя ищет баги</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Экран приветствия -->
   <div id="start-screen">
     <h1>Давай поможем Вите найти все баги!</h1>
     <button id="start-btn">Начать</button>
   </div>
 
-  <div id="controls">
-  <button id="left-btn">◀ Влево</button>
-  <button id="right-btn">Вправо ▶</button>
-</div>
-
+  <!-- Игровой контейнер -->
   <div id="game-container" style="display:none;">
     <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD -->
     <div id="hud">
       <span id="score">Счёт: 0</span>
       <span id="lives">Жизни: 5</span>
     </div>
+
+    <!-- Кнопки управления -->
+    <div id="controls" style="display:none; position: fixed; bottom: 10px; width: 100%; text-align: center;">
+      <button id="left-btn" touch-action="none">◀ Влево</button>
+      <button id="right-btn" touch-action="none">Вправо ▶</button>
+    </div>
   </div>
 
+  <!-- Экран поражения -->
   <div id="game-over" style="display:none;">
     <h1>GAME OVER</h1>
     <button id="restart-btn">Играть снова</button>
   </div>
 
+  <!-- Экран победы -->
   <div id="victory" style="display:none;">
     <h1>С Днем Рождения, Витя! 🎉</h1>
     <canvas id="confettiCanvas"></canvas>
