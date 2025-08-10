@@ -1,4 +1,4 @@
-// DOM
+// DOM элементы
 const startBtn = document.getElementById("start-btn");
 const startScreen = document.getElementById("start-screen");
 const gameContainer = document.getElementById("game-container");
@@ -18,7 +18,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 600;
 
-// Изображения / флаги
+// Игрок и параметры
 let playerImg = new Image();
 playerImg.src = "images/player.png";
 let playerImgLoaded = false;
@@ -26,8 +26,7 @@ let playerImgLoaded = false;
 let bugImg = new Image();
 bugImg.src = "images/bug.png";
 
-// Игровые переменные
-let player = { x: 400, y: 500, width: 50, height: 50, speed: 5 };
+let player = { x: 400, y: 500, width: 50, height: 50, speed: 8 };
 let bugs = [];
 let score = 0;
 let lives = 5;
@@ -36,58 +35,47 @@ let spawnInterval = null;
 let bugSpeed = 2;
 let acceleration = 0.1;
 
-// Скрываем кнопки управления до старта
-if (controls) controls.style.display = "none";
+// Скрываем кнопки управления до начала игры
+controls.style.display = "none";
 
-// Звуки (необязательно)
+// Звуки
 const soundCatch = new Audio("sounds/catch.mp3");
-const soundLose = new Audio("sounds/lifedown.mp3"); // использую твоё имя файла
+const soundLose = new Audio("sounds/lifedown.mp3");
 const soundVictory = new Audio("sounds/victory.mp3");
 
-// ---- Обработчик кнопки "Начать" — навешиваем всегда ----
-startBtn.disabled = true; // блокируем пока не загрузится картинка игрока
-
-function handleStartClick() {
-  // Если ресурсы не готовы — игнорируем нажатие
-  if (!playerImgLoaded) {
-    console.log("Waiting for assets to load...");
-    return;
-  }
-  // Скрываем стартовый экран, показываем игру и контролы
-  startScreen.style.display = "none";
-  gameContainer.style.display = "block";
-  controls.style.display = "flex";
-  startGame();
-}
-
-startBtn.addEventListener("click", handleStartClick);
-
-// ---- Обработка загрузки картинки игрока ----
+// Обработка загрузки игрока и активация кнопки
 playerImg.onload = () => {
   playerImgLoaded = true;
   startBtn.disabled = false;
-  console.log("playerImg loaded — start button enabled");
 };
-// если картинка уже в кеше, вызвать onload вручную
 if (playerImg.complete) {
   playerImg.onload();
 }
 
-// ---- Основные игровые функции ----
+// Обработчик кнопки "Начать"
+startBtn.addEventListener("click", () => {
+  if (!playerImgLoaded) return;
+  startScreen.style.display = "none";
+  gameContainer.style.display = "block";
+  controls.style.display = "flex";
+  startGame();
+});
+
+// Основные функции игры
 function startGame() {
   score = 0;
   lives = 5;
   bugs = [];
   bugSpeed = 2;
+
   scoreDisplay.textContent = "Счёт: " + score;
   livesDisplay.textContent = "Жизни: " + lives;
 
   gameOverScreen.style.display = "none";
   victoryScreen.style.display = "none";
 
-  // Защита от двойного запуска
-  if (gameInterval) clearInterval(gameInterval);
-  if (spawnInterval) clearInterval(spawnInterval);
+  clearInterval(gameInterval);
+  clearInterval(spawnInterval);
 
   gameInterval = setInterval(updateGame, 20);
   spawnInterval = setInterval(spawnBug, 1000);
@@ -95,19 +83,19 @@ function startGame() {
 
 function spawnBug() {
   let x = Math.random() * (canvas.width - 50);
-  bugs.push({ x: x, y: 0, width: 50, height: 50 });
+  bugs.push({ x, y: 0, width: 50, height: 50 });
 }
 
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Движение жуков
+  // Движение и удаление жуков
   for (let i = bugs.length - 1; i >= 0; i--) {
     bugs[i].y += bugSpeed;
     if (bugs[i].y > canvas.height) {
       bugs.splice(i, 1);
       lives--;
-      try { soundLose.play(); } catch (e) {}
+      soundLose.play().catch(() => {});
       livesDisplay.textContent = "Жизни: " + lives;
       if (lives <= 0) endGame(false);
     }
@@ -115,18 +103,23 @@ function updateGame() {
 
   // Рисуем жуков
   for (let bug of bugs) {
-    if (bugImg.complete) ctx.drawImage(bugImg, bug.x, bug.y, bug.width, bug.height);
-    else {
+    if (bugImg.complete) {
+      ctx.drawImage(bugImg, bug.x, bug.y, bug.width, bug.height);
+    } else {
       ctx.fillStyle = "red";
       ctx.fillRect(bug.x, bug.y, bug.width, bug.height);
     }
   }
 
   // Рисуем игрока
-  if (playerImgLoaded) ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-  else { ctx.fillStyle = "blue"; ctx.fillRect(player.x, player.y, player.width, player.height); }
+  if (playerImgLoaded) {
+    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
+  } else {
+    ctx.fillStyle = "blue";
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+  }
 
-  // Проверка столкновений
+  // Коллизии
   for (let i = bugs.length - 1; i >= 0; i--) {
     if (
       player.x < bugs[i].x + bugs[i].width &&
@@ -136,7 +129,7 @@ function updateGame() {
     ) {
       bugs.splice(i, 1);
       score++;
-      try { soundCatch.play(); } catch (e) {}
+      soundCatch.play().catch(() => {});
       scoreDisplay.textContent = "Счёт: " + score;
 
       if (score % 10 === 0) bugSpeed += acceleration;
@@ -145,79 +138,87 @@ function updateGame() {
   }
 }
 
+// Завершение игры
 function endGame(victory) {
   clearInterval(gameInterval);
   clearInterval(spawnInterval);
   gameInterval = null;
   spawnInterval = null;
+
   controls.style.display = "none";
+  gameContainer.style.display = "none";
 
   if (victory) {
     victoryScreen.style.display = "block";
-    try { soundVictory.play(); } catch (e) {}
+    soundVictory.play().catch(() => {});
   } else {
     gameOverScreen.style.display = "block";
   }
 }
 
-// Перезапуск
+// Перезапуск игры
 restartBtn.addEventListener("click", () => {
   gameOverScreen.style.display = "none";
   controls.style.display = "flex";
+  gameContainer.style.display = "block";
   startGame();
 });
+
 restartBtnVictory.addEventListener("click", () => {
   victoryScreen.style.display = "none";
   controls.style.display = "flex";
+  gameContainer.style.display = "block";
   startGame();
 });
 
-// ---- Кнопки влево/вправо: клики и сенсор ----
-function moveLeftOnce() { player.x = Math.max(0, player.x - player.speed); }
-function moveRightOnce() { player.x = Math.min(canvas.width - player.width, player.x + player.speed); }
+// Управление игроком — кнопки
+function moveLeftOnce() {
+  player.x = Math.max(0, player.x - player.speed);
+}
+function moveRightOnce() {
+  player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+}
 
-// Мышь
-leftBtn.addEventListener("mousedown", moveLeftOnce);
-rightBtn.addEventListener("mousedown", moveRightOnce);
+let leftInterval = null;
+let rightInterval = null;
 
-// Сенсор (touch)
-leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveLeftOnce(); }, { passive: false });
-rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveRightOnce(); }, { passive: false });
-
-// Для удержания (плавное движение) — опционально:
-let holdInterval = null;
-leftBtn.addEventListener("touchstart", () => {
-  clearInterval(holdInterval);
-  holdInterval = setInterval(moveLeftOnce, 80);
-});
-leftBtn.addEventListener("touchend", () => clearInterval(holdInterval));
 leftBtn.addEventListener("mousedown", () => {
-  clearInterval(holdInterval);
-  holdInterval = setInterval(moveLeftOnce, 80);
+  moveLeftOnce();
+  leftInterval = setInterval(moveLeftOnce, 50);
 });
-leftBtn.addEventListener("mouseup", () => clearInterval(holdInterval));
-leftBtn.addEventListener("mouseleave", () => clearInterval(holdInterval));
+leftBtn.addEventListener("mouseup", () => clearInterval(leftInterval));
+leftBtn.addEventListener("mouseleave", () => clearInterval(leftInterval));
 
-rightBtn.addEventListener("touchstart", () => {
-  clearInterval(holdInterval);
-  holdInterval = setInterval(moveRightOnce, 80);
-});
-rightBtn.addEventListener("touchend", () => clearInterval(holdInterval));
 rightBtn.addEventListener("mousedown", () => {
-  clearInterval(holdInterval);
-  holdInterval = setInterval(moveRightOnce, 80);
+  moveRightOnce();
+  rightInterval = setInterval(moveRightOnce, 50);
 });
-rightBtn.addEventListener("mouseup", () => clearInterval(holdInterval));
-rightBtn.addEventListener("mouseleave", () => clearInterval(holdInterval));
+rightBtn.addEventListener("mouseup", () => clearInterval(rightInterval));
+rightBtn.addEventListener("mouseleave", () => clearInterval(rightInterval));
+
+// Сенсорное управление (тач)
+leftBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  moveLeftOnce();
+  leftInterval = setInterval(moveLeftOnce, 50);
+}, { passive: false });
+leftBtn.addEventListener("touchend", () => clearInterval(leftInterval));
+
+rightBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  moveRightOnce();
+  rightInterval = setInterval(moveRightOnce, 50);
+}, { passive: false });
+rightBtn.addEventListener("touchend", () => clearInterval(rightInterval));
 
 // Клавиатура
-document.addEventListener("keydown", (e) => {
+document.addEventListener("keydown", e => {
   if (e.key === "ArrowLeft") moveLeftOnce();
-  if (e.key === "ArrowRight") moveRightOnce();
+  else if (e.key === "ArrowRight") moveRightOnce();
 });
 
-// Отключаем масштабирование/жесты, чтобы двойной тап не зумил страницу
-document.addEventListener("touchstart", function (event) {
-  if (event.touches.length > 1) event.preventDefault();
+// Отключение масштабирования на сенсорных устройствах
+document.addEventListener("touchstart", e => {
+  if (e.touches.length > 1) e.preventDefault();
 }, { passive: false });
-document.addEventListener("gesturestart", function (event) { event.preventDefault(); });
+document.addEventListener("gesturestart", e => e.preventDefault());
