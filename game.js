@@ -98,8 +98,13 @@ resizeCanvas();
 
 // Обработчик старта
 startBtn.addEventListener("click", () => {
-  if (!playerImgLoaded) return;
+  console.log("Start clicked");
+  if (!playerImgLoaded) {
+    console.log("Player image not loaded yet");
+    return;
+  }
   resizeCanvas();  // Обновляем размеры перед стартом
+  console.log("Canvas size:", canvas.width, canvas.height);
   startScreen.style.display = "none";
   gameContainer.style.display = "block";
   controls.style.display = "flex";
@@ -127,7 +132,7 @@ function startGame() {
 
 // Спавн новых объектов
 function spawnBug() {
-  let maxX = canvas.clientWidth - 50;
+  let maxX = (canvas.width / scale) - 50;
   let x = Math.random() * maxX;
   let type = types[Math.floor(Math.random() * types.length)].name;
   bugs.push({ x: x, y: 0, width: 50, height: 50, type });
@@ -177,7 +182,7 @@ function updateGame() {
         return;
       }
     }
-    else if (bugs[i].y > canvas.clientHeight) {
+    else if (bugs[i].y > (canvas.height / scale)) {
       // Удаляем объект, достигший дна — жизни не уменьшаются
       bugs.splice(i, 1);
     }
@@ -240,7 +245,7 @@ function moveLeftOnce() {
   player.x = Math.max(0, player.x - player.speed);
 }
 function moveRightOnce() {
-  player.x = Math.min(canvas.clientWidth - player.width, player.x + player.speed);
+  player.x = Math.min((canvas.width / scale) - player.width, player.x + player.speed);
 }
 
 leftBtn.addEventListener("mousedown", moveLeftOnce);
