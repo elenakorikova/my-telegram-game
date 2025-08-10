@@ -96,7 +96,6 @@ function startGame() {
 // Спавн новых объектов
 function spawnBug() {
   let x = Math.random() * (canvas.width - 50);
-  // Случайно выбираем тип объекта
   let type = types[Math.floor(Math.random() * types.length)].name;
   bugs.push({ x: x, y: 0, width: 50, height: 50, type });
 }
@@ -117,7 +116,7 @@ function updateGame() {
     ) {
       const objType = bugs[i].type;
 
-      bugs.splice(i, 1);  // удаляем пойманный объект
+      bugs.splice(i, 1);
 
       if (objType === "bug") {
         score += 3;
@@ -133,7 +132,7 @@ function updateGame() {
         soundLose.play().catch(() => {});
         if (lives <= 0) {
           endGame(false);
-          return; // чтобы остановить обновление игры после конца
+          return;
         }
       }
 
@@ -142,17 +141,12 @@ function updateGame() {
 
       if (score >= 20) {
         endGame(true);
-        return; // чтобы остановить обновление игры после победы
+        return;
       }
-
-      continue; // объект обработан, идем к следующему
     }
-
-    // Если объект достиг низа экрана — просто удаляем, без изменения жизней
-    if (bugs[i].y > canvas.height) {
+    else if (bugs[i].y > canvas.height) {
+      // Удаляем объект, достигший дна — жизни не уменьшаются
       bugs.splice(i, 1);
-      // Жизни и счет не меняем
-      continue;
     }
   }
 
@@ -187,7 +181,7 @@ function endGame(victory) {
   if (victory) {
     victoryScreen.style.display = "block";
     soundVictory.play().catch(() => {});
-    startConfetti(); // добавим анимацию конфетти, если хочешь
+    startConfetti();
   } else {
     gameOverScreen.style.display = "block";
   }
@@ -268,7 +262,6 @@ document.addEventListener("gesturestart", function (event) {
 
 // ------- Анимация конфетти (простая) -------
 function startConfetti() {
-  // Твой код или можно подключить библиотеку confetti.js
-  // Пока просто выводим сообщение в консоль
-  console.log("С днем рождения, Витя! 🎉");
+  // Заглушка — сюда можно добавить конфетти-библиотеку
+  console.log("С днём рождения, Витя! 🎉");
 }
