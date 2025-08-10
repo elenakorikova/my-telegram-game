@@ -40,14 +40,18 @@
 </head>
 <body>
   <!-- Стартовый экран -->
- <div class="terminal">
+<div id="start-screen">
+  <h1>Давай поможем Вите найти все баги</h1>
+  
+  <!-- Терминал с правилами -->
+  <div class="terminal">
     <div class="terminal-header">
       <div class="terminal-buttons">
         <span class="terminal-btn red"></span>
         <span class="terminal-btn yellow"></span>
         <span class="terminal-btn green"></span>
       </div>
-      <span class="terminal-title">rules.exe</span>
+      <span class="terminal-title">Правила</span>
     </div>
     <div class="terminal-body">
       <p>> Управление: кнопки ← → </p>
@@ -61,8 +65,7 @@
   </div>
   
   <button id="start-btn">ЗАПУСК ИГРЫ</button>
-  </div>
-
+</div>
   <!-- Кнопки управления (скрыты до старта) -->
   <div id="controls" style="display:none;">
     <button id="left-btn">◀ Влево</button>
