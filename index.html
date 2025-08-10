@@ -2,35 +2,33 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Витя ищет баги</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Экран приветствия -->
+  <!-- Стартовый экран -->
   <div id="start-screen">
     <h1>Давай поможем Вите найти все баги!</h1>
     <button id="start-btn">Начать</button>
   </div>
 
-  <!-- Игровой контейнер -->
+  <!-- Кнопки управления (скрыты до старта) -->
+  <div id="controls" style="display:none;">
+    <button id="left-btn">◀ Влево</button>
+    <button id="right-btn">Вправо ▶</button>
+  </div>
+
+  <!-- Игровое поле -->
   <div id="game-container" style="display:none;">
     <canvas id="gameCanvas"></canvas>
-
-    <!-- HUD -->
     <div id="hud">
       <span id="score">Счёт: 0</span>
       <span id="lives">Жизни: 5</span>
     </div>
-
-    <!-- Кнопки управления -->
-    <div id="controls" style="display:none; position: fixed; bottom: 10px; width: 100%; text-align: center;">
-      <button id="left-btn" touch-action="none">◀ Влево</button>
-      <button id="right-btn" touch-action="none">Вправо ▶</button>
-    </div>
   </div>
 
-  <!-- Экран поражения -->
+  <!-- Экран проигрыша -->
   <div id="game-over" style="display:none;">
     <h1>GAME OVER</h1>
     <button id="restart-btn">Играть снова</button>
