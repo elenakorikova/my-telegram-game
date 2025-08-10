@@ -42,11 +42,12 @@ body {
     background: #cce7ff;
     display: block;
     margin: 0 auto;
-    width: 100vw;      /* по ширине окна */
-    height: auto;      /* высота авто с сохранением пропорций */
-    max-width: 800px;  /* максимум ширины */
-    max-height: 600px; /* максимум высоты */
+    width: 100vw;        /* по ширине окна */
+    max-width: 800px;    /* максимум ширины */
+    height: calc(100vw * 0.75); /* высота — 75% от ширины */
+    max-height: 450px;   /* максимум высоты (0.75 * 600 = 450) */
 }
+
 
 #score, #lives {
     font-size: 20px;
