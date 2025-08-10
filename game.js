@@ -106,14 +106,6 @@ startBtn.addEventListener("click", () => {
   startGame();
 });
 
-  resizeCanvas();  // Обновляем размеры перед стартом
-  console.log("Canvas size:", canvas.width, canvas.height);
-  startScreen.style.display = "none";
-  gameContainer.style.display = "block";
-  controls.style.display = "flex";
-  startGame();
-});
-
 // Запуск игры
 function startGame() {
   score = 0;
