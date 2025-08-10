@@ -23,6 +23,14 @@ const rightBtn = document.getElementById("rightBtn");
 let moveInterval;
 
 // Управление кнопками
+
+document.getElementById('start-btn').addEventListener('click', () => {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('game-container').style.display = 'block';
+  document.getElementById('controls').style.display = 'block'; // показываем кнопки
+  startGame();
+});
+
 function startMove(direction) {
   clearInterval(moveInterval);
   moveInterval = setInterval(() => movePlayer(direction), 50);
