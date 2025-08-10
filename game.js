@@ -166,7 +166,7 @@ function updateGame() {
         score += 1;
         soundCatch.play().catch(() => {});
       } else if (objType === "coffee") {
-        lives++;
+        lives = Math.min(5, lives + 1);
         soundLifeUp.play().catch(() => {});
       } else if (objType === "fire") {
         lives--;
