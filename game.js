@@ -38,8 +38,7 @@ types.forEach(t => {
 });
 
 // Игровые переменные
-// Координаты и размеры игрока в «CSS» пикселях (после масштабирования)
-let player = { x: 400, y: 0, width: 50, height: 50, speed: 8 };
+let player = { x: 0, y: 0, width: 50, height: 50, speed: 8 };
 let bugs = [];
 let score = 0;
 let lives = 5;
@@ -69,7 +68,7 @@ if (playerImg.complete) playerImg.onload();
 // Функция подгонки canvas под размер окна
 function resizeCanvas() {
   const maxWidth = 800; // Максимальная ширина игрового поля
-  const padding = 10;   // Отступ снизу для игрока
+  const padding = 10;   // Отступ снизу
 
   let width = Math.min(window.innerWidth, maxWidth);
   let height = window.innerHeight - padding;
@@ -84,6 +83,7 @@ function resizeCanvas() {
   canvas.width = width * scale;
   canvas.height = height * scale;
 
+  // Сброс трансформации и установка масштаба
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
 
   // Обновляем позицию игрока снизу с отступом padding
@@ -99,7 +99,7 @@ resizeCanvas();
 // Обработчик старта
 startBtn.addEventListener("click", () => {
   if (!playerImgLoaded) return;
-  resizeCanvas();
+  resizeCanvas();  // Обновляем размеры перед стартом
   startScreen.style.display = "none";
   gameContainer.style.display = "block";
   controls.style.display = "flex";
@@ -135,7 +135,6 @@ function spawnBug() {
 
 // Обновление игрового цикла
 function updateGame() {
-  // Чистим холст (в "CSS" пикселях)
   ctx.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
 
   for (let i = bugs.length - 1; i >= 0; i--) {
@@ -296,6 +295,5 @@ document.addEventListener("gesturestart", function (event) {
 
 // ------- Анимация конфетти (простая) -------
 function startConfetti() {
-  // Заглушка — сюда можно добавить конфетти-библиотеку
   console.log("С днём рождения, Витя! 🎉");
 }
