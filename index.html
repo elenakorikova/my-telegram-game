@@ -2,11 +2,19 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Витя ищет баги</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 0; background: #f0f0f0; }
+    #gameCanvas { background: #fff; display: block; margin: 10px auto; border: 2px solid #333; }
+    #controls { margin: 10px; }
+    button { font-size: 16px; padding: 10px 20px; cursor: pointer; }
+    #hud { margin-top: 5px; font-size: 18px; }
+    #game-over, #victory, #start-screen { margin-top: 20px; }
+  </style>
 </head>
 <body>
+
   <!-- Стартовый экран -->
   <div id="start-screen">
     <h1>Давай поможем Вите найти все баги!</h1>
@@ -24,7 +32,7 @@
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     <div id="hud">
       <span id="score">Счёт: 0</span>
-      <span id="lives">Жизни: 5</span>
+      <span id="lives" style="margin-left:20px;">Жизни: 5</span>
     </div>
   </div>
 
@@ -36,8 +44,8 @@
 
   <!-- Экран победы -->
   <div id="victory" style="display:none;">
-    <h1>С Днем Рождения, Витя! 🎉</h1>
-    <canvas id="confettiCanvas"></canvas>
+    <h1>С Днём Рождения, Витя! 🎉</h1>
+    <canvas id="confettiCanvas" width="800" height="600" style="display:none;"></canvas>
     <button id="restart-btn-victory">Играть снова</button>
   </div>
 
