@@ -12,32 +12,54 @@ playerImg.onload = () => {
   console.log("Player image loaded");
 };
 
-const leftBtn = document.getElementById("left-btn");
-const rightBtn = document.getElementById("right-btn");
+// Скорость движения игрока
+let moveSpeed = 12;
 
-leftBtn.addEventListener("mousedown", () => movePlayer(-1));
-rightBtn.addEventListener("mousedown", () => movePlayer(1));
+// Получаем кнопки управления
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
 
-// Опционально, чтобы движение было плавным при удержании кнопки:
+// Интервал для плавного движения при удержании
 let moveInterval;
 
-leftBtn.addEventListener("mousedown", () => {
+// Управление кнопками
+function startMove(direction) {
   clearInterval(moveInterval);
-  moveInterval = setInterval(() => movePlayer(-1), 50);
-});
-leftBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
-leftBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
+  moveInterval = setInterval(() => movePlayer(direction), 50);
+}
 
-rightBtn.addEventListener("mousedown", () => {
+function stopMove() {
   clearInterval(moveInterval);
-  moveInterval = setInterval(() => movePlayer(1), 50);
+}
+
+leftBtn.addEventListener("mousedown", () => startMove(-1));
+leftBtn.addEventListener("mouseup", stopMove);
+leftBtn.addEventListener("mouseleave", stopMove);
+
+rightBtn.addEventListener("mousedown", () => startMove(1));
+rightBtn.addEventListener("mouseup", stopMove);
+rightBtn.addEventListener("mouseleave", stopMove);
+
+// Поддержка сенсорных устройств
+leftBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startMove(-1); });
+leftBtn.addEventListener("touchend", stopMove);
+
+rightBtn.addEventListener("touchstart", (e) => { e.preventDefault(); startMove(1); });
+rightBtn.addEventListener("touchend", stopMove);
+
+// Отключаем масштабирование при быстром нажатии
+document.addEventListener("touchstart", function (event) {
+  if (event.touches.length > 1) {
+    event.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener("gesturestart", function (event) {
+  event.preventDefault();
 });
-rightBtn.addEventListener("mouseup", () => clearInterval(moveInterval));
-rightBtn.addEventListener("mouseleave", () => clearInterval(moveInterval));
 
 function movePlayer(direction) {
-  // direction: -1 — влево, 1 — вправо
-  player.x += direction * player.speed;
+  player.x += direction * moveSpeed;
   if (player.x < 0) player.x = 0;
   if (player.x > canvas.width - player.size) player.x = canvas.width - player.size;
 }
@@ -87,8 +109,8 @@ types.forEach(type => {
 });
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") player.x = Math.max(0, player.x - player.speed);
-  if (e.key === "ArrowRight") player.x = Math.min(canvas.width - player.size, player.x + player.speed);
+  if (e.key === "ArrowLeft") movePlayer(-1);
+  if (e.key === "ArrowRight") movePlayer(1);
 });
 
 function spawnObject() {
@@ -170,8 +192,7 @@ function gameLoop(timestamp) {
 }
 
 // Запуск игры только после загрузки картинки игрока
-startBtn.disabled = true; // блокируем кнопку пока картинка не загрузится
-
+startBtn.disabled = true;
 playerImg.onload = () => {
   playerImgLoaded = true;
   startBtn.disabled = false;
@@ -189,12 +210,14 @@ function startGame() {
   gameOverScreen.style.display = "none";
   victoryScreen.style.display = "none";
   document.getElementById("game-container").style.display = "block";
+  document.getElementById("controls").style.display = "block"; // показываем кнопки
   gameLoop(lastTime);
 }
 
 function endGame(victory) {
   gameRunning = false;
   document.getElementById("game-container").style.display = "none";
+  document.getElementById("controls").style.display = "none"; // скрываем кнопки
   if (victory) {
     victoryScreen.style.display = "block";
     victorySound.play();
