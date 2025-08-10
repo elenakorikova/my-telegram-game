@@ -1,4 +1,7 @@
-// DOM элементы
+// Базовые размеры игрового поля
+const BASE_WIDTH = 800;
+const BASE_HEIGHT = 600;
+
 const startBtn = document.getElementById("start-btn");
 const startScreen = document.getElementById("start-screen");
 const gameContainer = document.getElementById("game-container");
@@ -15,8 +18,23 @@ const rightBtn = document.getElementById("right-btn");
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-canvas.width = 800;
-canvas.height = 600;
+
+// Игровые переменные
+let scale = 1;
+
+let player = { x: 400, y: 550, width: 50, height: 50, speed: 8 };
+let bugs = [];
+let score = 0;
+let lives = 5;
+let gameInterval = null;
+let spawnInterval = null;
+let bugSpeed = 2;
+let acceleration = 0.05;
+
+// Звуки
+const soundCatch = new Audio("sounds/catch.mp3");
+const soundLose = new Audio("sounds/lifedown.mp3");
+const soundVictory = new Audio("sounds/victory.mp3");
 
 // Изображения
 let playerImg = new Image();
@@ -37,21 +55,6 @@ types.forEach(t => {
   images[t.name] = img;
 });
 
-// Игровые переменные
-let player = { x: 400, y: 550, width: 50, height: 50, speed: 8 };
-let bugs = [];
-let score = 0;
-let lives = 5;
-let gameInterval = null;
-let spawnInterval = null;
-let bugSpeed = 2;
-let acceleration = 0.05;
-
-// Звуки
-const soundCatch = new Audio("sounds/catch.mp3");
-const soundLose = new Audio("sounds/lifedown.mp3");
-const soundVictory = new Audio("sounds/victory.mp3");
-
 // Скрываем контролы до старта
 controls.style.display = "none";
 
@@ -64,6 +67,19 @@ playerImg.onload = () => {
   console.log("Player image loaded, start button enabled");
 };
 if (playerImg.complete) playerImg.onload();
+
+// Функция ресайза canvas под размер окна и расчет масштаба
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const scaleX = canvas.width / BASE_WIDTH;
+  const scaleY = canvas.height / BASE_HEIGHT;
+
+  scale = Math.min(scaleX, scaleY);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
 // Обработчик старта
 startBtn.addEventListener("click", () => {
@@ -93,9 +109,9 @@ function startGame() {
   spawnInterval = setInterval(spawnBug, 1000);
 }
 
-// Спавн новых объектов
+// Спавн новых объектов — координаты в базовых размерах
 function spawnBug() {
-  let x = Math.random() * (canvas.width - 50);
+  let x = Math.random() * (BASE_WIDTH - 50);
   let type = types[Math.floor(Math.random() * types.length)].name;
   bugs.push({ x: x, y: 0, width: 50, height: 50, type });
 }
@@ -104,10 +120,19 @@ function spawnBug() {
 function updateGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+  ctx.save();
+
+  // Центрируем игровое поле на canvas
+  const offsetX = (canvas.width - BASE_WIDTH * scale) / 2;
+  const offsetY = (canvas.height - BASE_HEIGHT * scale) / 2;
+
+  ctx.translate(offsetX, offsetY);
+  ctx.scale(scale, scale);
+
+  // Обновление и проверка поимки объектов
   for (let i = bugs.length - 1; i >= 0; i--) {
     bugs[i].y += bugSpeed;
 
-    // Проверка поимки игроком
     if (
       player.x < bugs[i].x + bugs[i].width &&
       player.x + player.width > bugs[i].x &&
@@ -115,7 +140,6 @@ function updateGame() {
       player.y + player.height > bugs[i].y
     ) {
       const objType = bugs[i].type;
-
       bugs.splice(i, 1);
 
       if (objType === "bug") {
@@ -132,6 +156,7 @@ function updateGame() {
         soundLose.play().catch(() => {});
         if (lives <= 0) {
           endGame(false);
+          ctx.restore();
           return;
         }
       }
@@ -141,11 +166,10 @@ function updateGame() {
 
       if (score >= 20) {
         endGame(true);
+        ctx.restore();
         return;
       }
-    }
-    else if (bugs[i].y > canvas.height) {
-      // Удаляем объект, достигший дна — жизни не уменьшаются
+    } else if (bugs[i].y > BASE_HEIGHT) {
       bugs.splice(i, 1);
     }
   }
@@ -167,6 +191,8 @@ function updateGame() {
     ctx.fillStyle = "blue";
     ctx.fillRect(player.x, player.y, player.width, player.height);
   }
+
+  ctx.restore();
 }
 
 // Завершение игры
@@ -207,7 +233,7 @@ function moveLeftOnce() {
   player.x = Math.max(0, player.x - player.speed);
 }
 function moveRightOnce() {
-  player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+  player.x = Math.min(BASE_WIDTH - player.width, player.x + player.speed);
 }
 
 leftBtn.addEventListener("mousedown", moveLeftOnce);
