@@ -28,6 +28,7 @@ const types = [
   { name: "mockup", img: "images/mockup.png" },
   { name: "confluence", img: "images/confluence.png" },
   { name: "fire", img: "images/fire.png" },
+  { name: "coffee", img: "images/coffee.png" },
 ];
 
 let images = {};
@@ -50,6 +51,7 @@ let acceleration = 0.05;
 // Звуки
 const soundCatch = new Audio("sounds/catch.mp3");
 const soundLose = new Audio("sounds/lifedown.mp3");
+const soundLifeUp = new Audio("sounds/lifeup.mp3");
 const soundVictory = new Audio("sounds/victory.mp3");
 
 // Скрываем контролы до старта
@@ -155,14 +157,17 @@ function updateGame() {
       bugs.splice(i, 1);
 
       if (objType === "bug") {
-        score += 3;
+        score += 1;
         soundCatch.play().catch(() => {});
       } else if (objType === "mockup") {
         score += 1;
         soundCatch.play().catch(() => {});
       } else if (objType === "confluence") {
-        lives = 5;
+        score += 1;
         soundCatch.play().catch(() => {});
+      } else if (objType === "coffee") {
+        lives++;
+        soundLifeUp.play().catch(() => {});
       } else if (objType === "fire") {
         lives--;
         soundLose.play().catch(() => {});
