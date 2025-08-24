@@ -150,13 +150,13 @@ body {
   cursor: pointer;
   max-width: 200px;
   
-  /* Простая центровка */
+  /* ПРОСТОЙ И НАДЕЖНЫЙ ВАРИАНТ */
   position: fixed;
   bottom: 30px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 @keyframes blink {
