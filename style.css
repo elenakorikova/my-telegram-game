@@ -107,15 +107,15 @@ body {
 
 .victory-image {
   margin: 10px 0;
-  max-width: 80px; /* Еще меньше для мобильных */
-  width: 80px;
-  height: 80px;
+  max-width: 150px; /* Еще меньше для мобильных */
+  width: 150px;
+  height: 150px;
 }
 
 /* Жесткое ограничение размера */
 .celebration-img {
-  max-width: 150px !important;
-  max-height: 150px !important;
+  max-width: 140px !important;
+  max-height: 140px !important;
   width: auto !important;
   height: auto !important;
 }
