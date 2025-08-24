@@ -103,17 +103,20 @@ body {
 }
 
 .victory-image {
-  margin: 20px 0;
-  max-width: 300px;
-  animation: bounce 2s infinite ease-in-out;
+  margin: 15px 0;
+  max-width: 200px; /* Уменьшили размер контейнера */
 }
 
 .celebration-img {
-  width: 100%;
-  height: auto;
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-}
+  width: 150px;      /* Фиксированная ширина */
+  height: 150px;     /* Фиксированная высота */
+  object-fit: contain; /* Сохраняет пропорции */
+  
+  /* Убираем фон */
+  background: transparent !important;
+  
+  /* Делаем прозрачным фон если это PNG */
+  mix-blend-mode: multiply;
 
 /* Анимация */
 @keyframes bounce {
