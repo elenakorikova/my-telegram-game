@@ -139,25 +139,24 @@ body {
 }
 
 #restart-btn-victory {
-  all: unset; /* Сбрасываем все стили */
+  all: unset;
   
   background: linear-gradient(45deg, #ff6b00, #ffd700);
   color: white;
   border: none;
   padding: 12px 30px;
-  font-size: 1em; /* Уменьшили размер кнопки */
+  font-size: 1em;
   border-radius: 20px;
   cursor: pointer;
-  margin-top: 20px;
-  width: auto;
   max-width: 200px;
+  
+  /* Простая центровка */
   position: fixed;
-  bottom: 5vh;
-  left: 50vw; /* Используем проценты от ширины экрана */
-  transform: translateX(-50%);
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   z-index: 1000;
-  box-sizing: border-box;
-  margin: 0;
 }
 
 @keyframes blink {
