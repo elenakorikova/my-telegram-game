@@ -150,10 +150,12 @@ body {
   width: auto;
   max-width: 200px;
   position: fixed;
-  bottom: 30px; /* Отступ от нижнего края */
-  left: 50%;
+  bottom: 5vh;
+  left: 50vw; /* Используем проценты от ширины экрана */
   transform: translateX(-50%);
   z-index: 1000;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 @keyframes blink {
