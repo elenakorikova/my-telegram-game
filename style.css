@@ -112,12 +112,21 @@ body {
   height: 80px;
 }
 
+/* Жесткое ограничение размера */
 .celebration-img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain;
-  background: transparent;
-  display: block;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Для очень больших изображений */
+@media (min-width: 768px) {
+  .celebration-img {
+    max-width: 200px !important;
+    max-height: 200px !important;
+  }
+}
 }
 
 /* Для очень маленьких экранов */
