@@ -175,7 +175,7 @@ function updateGame() {
       scoreDisplay.textContent = "Счёт: " + score;
       livesDisplay.textContent = "Жизни: " + lives;
 
-      if (score >= 38) {
+      if (score >= 7) {
         endGame(true);
         return;
       }
