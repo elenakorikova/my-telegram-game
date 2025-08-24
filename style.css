@@ -93,6 +93,58 @@ body {
   color: #00ff00;
 }
 
+/* Стили для экрана победы */
+#victory {
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.victory-image {
+  margin: 20px 0;
+  max-width: 300px;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.celebration-img {
+  width: 100%;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+/* Анимация */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Дополнительные стили для красоты */
+#victory h1 {
+  color: #ffd700;
+  text-shadow: 0 0 10px #ff6b00;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+#restart-btn-victory {
+  background: linear-gradient(45deg, #ff6b00, #ffd700);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2em;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 30px;
+  transition: transform 0.3s;
+}
+
+#restart-btn-victory:hover {
+  transform: scale(1.1);
+}
+
 @keyframes blink {
   50% { opacity: 0; }
 }
