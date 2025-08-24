@@ -150,6 +150,11 @@ body {
   margin-top: 20px;
   width: auto;
   max-width: 200px;
+  position: fixed;
+  bottom: 30px; /* Отступ от нижнего края */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
 }
 
 @keyframes blink {
