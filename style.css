@@ -140,6 +140,7 @@ body {
 
 #restart-btn-victory {
   all: unset !important;
+  box-sizing: border-box !important;
   
   background: linear-gradient(45deg, #ff6b00, #ffd700) !important;
   color: white !important;
@@ -155,7 +156,7 @@ body {
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 1000 !important;
-  box-sizing: border-box !important;
+  display: block !important; /* Важно! */
 }
 
 @keyframes blink {
