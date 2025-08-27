@@ -188,7 +188,7 @@ body {
 
 #hud {
   position: fixed;
-  bottom: 120px;  /* чуть выше кнопок, которые снизу на 10px */
+  bottom: 160px;  /* чуть выше кнопок, которые снизу на 10px */
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.9);
