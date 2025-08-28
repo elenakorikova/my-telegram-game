@@ -187,7 +187,7 @@ body {
 }
 
 #hud {
-  position: fixed;
+  position: abcolute;
   bottom: 180px;
   left: 50%;
   transform: translateX(-50%);
