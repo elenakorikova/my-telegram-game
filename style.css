@@ -189,6 +189,7 @@ body {
 #game-container {
   position: relative; /* чтобы HUD позиционировался внутри */
   display: inline-block;
+  margin-bottom: 120px;
 }
 
 #hud {
